@@ -1,6 +1,7 @@
 package com.example.API_SpringBoot.service;
 
 import com.example.API_SpringBoot.entity.Local;
+import com.example.API_SpringBoot.error.LocalNotFoundException;
 import com.example.API_SpringBoot.repository.LocalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,12 @@ public class LocalServiceImpl implements LocalService {//Se debe implementar el 
     }
 
     @Override
-    public Local findLocalById(long id) {
-        return localRepository.findById(id).get();
+    public Local findLocalById(long id) throws LocalNotFoundException {
+        Optional<Local> local = localRepository.findById(id);
+        if (!local.isPresent()) {
+            throw new LocalNotFoundException("Local with id " + id + " not found");
+        }
+        return local.get();
     }
 
     @Override
@@ -30,7 +35,11 @@ public class LocalServiceImpl implements LocalService {//Se debe implementar el 
     }
 
     @Override
-    public Local updateLocal(long id, Local local) {
+    public Local updateLocal(long id, Local local) throws LocalNotFoundException {
+        Optional<Local> localOptional = localRepository.findById(id);
+        if (!localOptional.isPresent()) {
+            throw new LocalNotFoundException("Local with id " + id + " not found");
+        }
         Local localDB = localRepository.findById(id).get();
         //Filtrar la informacion que llega
         if (Objects.nonNull(local.getCode()) && !"".equalsIgnoreCase(local.getCode())) {
@@ -46,15 +55,21 @@ public class LocalServiceImpl implements LocalService {//Se debe implementar el 
     }
 
     @Override
-    public void deleteLocal(long id) {
+    public void deleteLocal(long id) throws LocalNotFoundException {
+        Optional<Local> localOptional = localRepository.findById(id);
         localRepository.deleteById(id);
     }
 
     //Consultas complejas
 
     @Override
-    public Optional<Local> findByNameIgnoreCase(String name) {
-        return localRepository.findByNameIgnoreCase(name);
+    public Optional<Local> findByNameIgnoreCase(String name) throws LocalNotFoundException {
+        Optional<Local> localOptional = localRepository.findByNameIgnoreCase(name);
+        if (!localOptional.isPresent()) {
+            throw new LocalNotFoundException("Local with name " + name + " not found");
+        }
+        //return localRepository.findByNameIgnoreCase(name);
+        return localOptional;
     }
 
 
