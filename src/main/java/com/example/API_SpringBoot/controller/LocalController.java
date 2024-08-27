@@ -3,6 +3,7 @@ package com.example.API_SpringBoot.controller;
 import com.example.API_SpringBoot.entity.Local;
 import com.example.API_SpringBoot.error.LocalNotFoundException;
 import com.example.API_SpringBoot.service.LocalService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,12 @@ public class LocalController {
     }
 
     @PostMapping("/store")
-    public Local save(@RequestBody Local local) {
+    public Local save(@Valid @RequestBody Local local) {
         return localService.saveLocal(local);
     }
 
     @PutMapping("/store/{id}")
-    public Local update(@PathVariable Long id, @RequestBody Local local) throws LocalNotFoundException {
+    public Local update(@Valid @PathVariable Long id, @RequestBody Local local) throws LocalNotFoundException {
         return localService.updateLocal(id, local);
     }
 
